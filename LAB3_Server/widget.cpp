@@ -76,12 +76,20 @@ void Widget::sendFortune()
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
 
-    out << fortunes[QRandomGenerator::global()->bounded(fortunes.size())];
+    QString allFortunes;
+    for (int i = 0; i < fortunes.size(); i++){
+    allFortunes += fortunes[i] + "\n";
+    }
+
+    out << allFortunes;
 
     QTcpSocket *clientConnection = dynamic_cast<QTcpSocket*>(sender());
+
     clientConnection->write(block);
 
+
     dropClient(clientConnection);
+
 }
 
 void Widget::hanleNewConnection()
@@ -94,6 +102,8 @@ void Widget::hanleNewConnection()
 void Widget::hanleReadyRead()
 {
     qDebug() << "Read fortune is called";
+
+
 
     // Read transaction type
     if (trType == -1) {
